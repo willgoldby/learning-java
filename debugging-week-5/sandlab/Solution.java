@@ -25,15 +25,7 @@ public class Solution {
     this.display = display;
     this.random = random;
     this.grid = new int[display.getNumRows()][display.getNumColumns()];
-    // // display.getNumRows
-    // for (int i = 0; i < display.getNumRows(); i++){
-    //   for (int j= 0; j < display.getNumColumns(); j++){
-    //     grid[i][j] = EMPTY;
-    //   }
-    // }
-    // System.out.println("This is the grid: " + grid);
-
-  }
+    }
   
   /**
    * Called when the user clicks on a location.
@@ -53,9 +45,7 @@ public class Solution {
     if (display.getTool() == EMPTY){
       for (int rowValue = 0; rowValue < display.getNumRows(); rowValue++){
         for (int colValue = 0; colValue < display.getNumColumns(); colValue++){
-            System.out.println("Clicked on EMPTY");
             grid[rowValue][colValue] = 0;
-            System.out.println("All indices changed to 0");
           }
         }
       }
@@ -65,18 +55,11 @@ public class Solution {
             switch (grid[rowValue][colValue]) {
               case 0: Color black = new Color(0,0,0);
                       display.setColor(rowValue, colValue, black);
-                      System.out.println("Entered switch statement for case 0");
                       break;
               case 1: Color grey = new Color(192, 192, 192);
                       display.setColor(rowValue, colValue, grey);
                       break;
             }
-          //   if (grid[rowValue][colValue] == 1){
-          //     Color c = new Color(192, 192, 192);
-          //     display.setColor(rowValue, colValue, c);
-          // } else if (grid[rowValue][colValue] == 0){
-          //   Color c = new Color(0,0,0);
-          //   display.setColor(rowValue, colValue, c);
           }
         }
       }
