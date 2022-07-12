@@ -7,8 +7,9 @@ public class Solution {
   // Add constants for particle types here.
   public static final int EMPTY = 0;
   public static final int METAL = 1;
+  public static final int SAND = 2;
 
-  public static final String[] NAMES = {"Empty", "Metal"};
+  public static final String[] NAMES = {"Empty", "Metal", "SAND"};
 
   // Do not add any more fields as part of Lab 5.
   private int[][] grid;
@@ -38,34 +39,47 @@ public class Solution {
       grid[row][col] = tool;
     }
 
-  /** Copies each element of grid into the display. */
-  // updateDispay is repeatedly called. 
-  public void updateDisplay() {
-    // Clicking 'Empty' sets all indices to 0.
-    if (display.getTool() == EMPTY){
-      for (int rowValue = 0; rowValue < display.getNumRows(); rowValue++){
+/** Copies each element of grid into the display. */
+// updateDispay is repeatedly called. 
+public void updateDisplay() {
+  // Clicking 'Empty' sets all indices to 0.
+  if (display.getTool() == EMPTY){
+    for (int rowValue = 0; rowValue < display.getNumRows(); rowValue++){
+      for (int colValue = 0; colValue < display.getNumColumns(); colValue++){
+          grid[rowValue][colValue] = 0;
+        }
+      }
+    }
+    // Change color at each indice based on the value in the indice. 
+    for (int rowValue = 0; rowValue < display.getNumRows(); rowValue++){
         for (int colValue = 0; colValue < display.getNumColumns(); colValue++){
-            grid[rowValue][colValue] = 0;
+          switch (grid[rowValue][colValue]) {
+            case 0: Color black = new Color(0,0,0);
+                    display.setColor(rowValue, colValue, black);
+                    break;
+            case 1: Color grey = new Color(192, 192, 192);
+                    display.setColor(rowValue, colValue, grey);
+                    break;
+            case 2: Color yellow = new Color(255, 255, 0);
+                    display.setColor(rowValue, colValue, yellow);
+                    break;
           }
         }
       }
-      // Change color at each indice based on the value in the indice. 
-      for (int rowValue = 0; rowValue < display.getNumRows(); rowValue++){
-          for (int colValue = 0; colValue < display.getNumColumns(); colValue++){
-            switch (grid[rowValue][colValue]) {
-              case 0: Color black = new Color(0,0,0);
-                      display.setColor(rowValue, colValue, black);
-                      break;
-              case 1: Color grey = new Color(192, 192, 192);
-                      display.setColor(rowValue, colValue, grey);
-                      break;
-            }
-          }
-        }
-      }
-  /** Called repeatedly. Causes one random particle to maybe do something. */
-  public void step() {
-    // TODO: Populate this method in step 6 and beyond.
+    }
+/** Called repeatedly. Causes one random particle to maybe do something. */
+public void step() {
+  // TODO: Populate this method in step 6 and beyond.
+  // pick a random position within the grid
+  // if position contains sand and the space below is empty
+  // move the sand down one row.
+  RandomGenerator randoNumbers = new RandomGenerator(display.getNumRows() - 1, display.getNumColumns()-1);
+  Point randomPoint1 = randoNumbers.getRandomPoint();
+  if ((grid[randomPoint1.row][randomPoint1.column] == 2) && (grid[randomPoint1.row + 1][randomPoint1.column] == 0) && (randomPoint1.row + 1 <= display.getNumRows())){
+      grid[randomPoint1.row][randomPoint1.column] = 0;
+      grid[randomPoint1.row + 1][randomPoint1.column] = 2; 
+    }
+
   }
 
   /********************************************************************/
