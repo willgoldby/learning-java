@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.io.*;
 import java.util.*;
+import java.util.random.RandomGenerator;
 
 public class Solution {
 
@@ -8,8 +9,9 @@ public class Solution {
   public static final int EMPTY = 0;
   public static final int METAL = 1;
   public static final int SAND = 2;
+  public static final int WATER = 3;
 
-  public static final String[] NAMES = {"Empty", "Metal", "SAND"};
+  public static final String[] NAMES = { "Empty", "Metal", "Sand", "Water", };
 
   // Do not add any more fields as part of Lab 5.
   private int[][] grid;
@@ -20,14 +22,14 @@ public class Solution {
    * Constructor.
    *
    * @param display The display to use for this run
-   * @param random The random number generator to use to pick random points
+   * @param random  The random number generator to use to pick random points
    */
   public Solution(SandDisplayInterface display, RandomGenerator random) {
     this.display = display;
     this.random = random;
     this.grid = new int[display.getNumRows()][display.getNumColumns()];
-    }
-  
+  }
+
   /**
    * Called when the user clicks on a location.
    *
@@ -36,58 +38,135 @@ public class Solution {
    * @param tool
    */
   private void locationClicked(int row, int col, int tool) {
-      grid[row][col] = tool;
-    }
+    grid[row][col] = tool;
+  }
 
-/** Copies each element of grid into the display. */
-// updateDispay is repeatedly called. 
-public void updateDisplay() {
-  // Clicking 'Empty' sets all indices to 0.
-  if (display.getTool() == EMPTY){
-    for (int rowValue = 0; rowValue < display.getNumRows(); rowValue++){
-      for (int colValue = 0; colValue < display.getNumColumns(); colValue++){
+  /** Copies each element of grid into the display. */
+  // updateDispay is repeatedly called.
+  public void updateDisplay() {
+    // Clicking 'Empty' sets all indices to 0.
+    if (display.getTool() == EMPTY) {
+      for (int rowValue = 0; rowValue < display.getNumRows(); rowValue++) {
+        for (int colValue = 0; colValue < display.getNumColumns(); colValue++) {
           grid[rowValue][colValue] = 0;
         }
       }
     }
-    // Change color at each indice based on the value in the indice. 
-    for (int rowValue = 0; rowValue < display.getNumRows(); rowValue++){
-        for (int colValue = 0; colValue < display.getNumColumns(); colValue++){
-          switch (grid[rowValue][colValue]) {
-            case 0: Color black = new Color(0,0,0);
-                    display.setColor(rowValue, colValue, black);
-                    break;
-            case 1: Color grey = new Color(192, 192, 192);
-                    display.setColor(rowValue, colValue, grey);
-                    break;
-            case 2: Color yellow = new Color(255, 255, 0);
-                    display.setColor(rowValue, colValue, yellow);
-                    break;
-          }
+    // Change color at each indice based on the value in the indice.
+    for (int rowValue = 0; rowValue < display.getNumRows(); rowValue++) {
+      for (int colValue = 0; colValue < display.getNumColumns(); colValue++) {
+        switch (grid[rowValue][colValue]) {
+          case 0:
+            Color black = new Color(0, 0, 0);
+            display.setColor(rowValue, colValue, black);
+            break;
+          case 1:
+            Color grey = new Color(192, 192, 192);
+            display.setColor(rowValue, colValue, grey);
+            break;
+          case 2:
+            Color yellow = new Color(255, 255, 0);
+            display.setColor(rowValue, colValue, yellow);
+            break;
+          case 3:
+            Color blue = new Color(0, 0, 255);
+            display.setColor(rowValue, colValue, blue);
+            break;
         }
       }
     }
-/** Called repeatedly. Causes one random particle to maybe do something. */
-public void step() {
-  // TODO: Populate this method in step 6 and beyond.
-  // pick a random position within the grid
-  // if position contains sand and the space below is empty
-  // move the sand down one row.
-  RandomGenerator randoNumbers = new RandomGenerator(display.getNumRows() - 1, display.getNumColumns()-1);
-  Point randomPoint1 = randoNumbers.getRandomPoint();
-  if ((grid[randomPoint1.row][randomPoint1.column] == 2) && (grid[randomPoint1.row + 1][randomPoint1.column] == 0) && (randomPoint1.row + 1 <= display.getNumRows())){
-      grid[randomPoint1.row][randomPoint1.column] = 0;
-      grid[randomPoint1.row + 1][randomPoint1.column] = 2; 
-    }
-
   }
+
+  /** Called repeatedly. Causes one random particle to maybe do something. */
+  public void step() {
+    // TODO: Populate this method in step 6 and beyond.
+    // pick a random position within the grid
+    // if position contains sand and the space below is empty
+    // move the sand down one row.
+    RandomGenerator randoNumbers = new RandomGenerator(display.getNumRows() - 1, display.getNumColumns() - 1);
+    Point randomPoint1 = randoNumbers.getRandomPoint();
+    // Checks if cell is sand and then moves the cell if there's nothing below it.
+    if ((grid[randomPoint1.row][randomPoint1.column] == 2) && (grid[randomPoint1.row + 1][randomPoint1.column] == 0)
+        && (randomPoint1.row + 1 <= display.getNumRows())) {
+      grid[randomPoint1.row][randomPoint1.column] = 0;
+      grid[randomPoint1.row + 1][randomPoint1.column] = 2;
+    } // End bracket for sand.
+    // Checks if cell is water.
+    else if ((grid[randomPoint1.row][randomPoint1.column] == 3)){
+      // get random direction.
+      int direction = randoNumbers.getRandomDirection();
+      // If direction is 0, have water flow like the sand.
+      if (direction == 0){
+        if ((grid[randomPoint1.row + 1][randomPoint1.column] == 0)
+        && (randomPoint1.row + 1 <= display.getNumRows())){
+      grid[randomPoint1.row][randomPoint1.column] = 0;
+      grid[randomPoint1.row + 1][randomPoint1.column] = 3;
+        } // End bracket for moving water down one row.
+      } // End bracket for checking if direction is 0.
+      // Move water to the right.
+      // Move water particle to the right if direction is 1.
+      else if (direction == 1){
+        if ((grid[randomPoint1.row][randomPoint1.column + 1] == 0) && 
+          (randomPoint1.column + 1 <= display.getNumColumns()) &&
+          (grid[randomPoint1.row + 1][randomPoint1.column] == 1 || 
+          grid[randomPoint1.row + 1][randomPoint1.column] == 2 ||
+          grid[randomPoint1.row + 1][randomPoint1.column] == 3)){
+            grid[randomPoint1.row][randomPoint1.column] = 0;
+            grid[randomPoint1.row][randomPoint1.column + 1] = 3;
+          } // End bracket for water moving to the right.
+      }
+      // Move water to the left if direction is 2.
+      else if (direction == 2) {
+        // Make sure there's nothing to the left.
+        if((grid[randomPoint1.row][randomPoint1.column - 1] == 0) &&
+          // Make sure you're within bounds of display.
+          (randomPoint1.column - 1 >= display.getNumColumns()) &&
+          (grid[randomPoint1.row - 1][randomPoint1.column] == 1 || 
+            grid[randomPoint1.row - 1][randomPoint1.column] == 2 ||
+            grid[randomPoint1.row - 1][randomPoint1.column] == 3)){
+              grid[randomPoint1.row][randomPoint1.column] = 0;
+              grid[randomPoint1.row][randomPoint1.column - 1] = 3;
+            }
+      }
+    } // End bracket for water.
+  } // End bracket for step()
+    //     get random number that represents direction
+    //     if (random number is 0) {
+    //       water falls like sand unless it would 
+    //       hit sand or metal
+
+    //     if (random number is 1){
+    //       water paricle moves to the right
+    //     } 
+    //     if (random number is 2){
+    //       water paricle moves to the left
+    //     }
+
+    // The behavior of water is a bit different than sand. In the step method,
+    // implement the following behavior: when the randomly selected cell contains
+    // water, use RandomGenerator to getRandomDirection. If the direction is 0,
+    // water falls like sand (unless it would hit sand or metal) but if the
+    // direction is 1, the water particle moves to the right (if possible) and if
+    // the direction is 2, the water particle moves to the left (if possible).
+
+    // This means that water will (with time) flow off a horizontal surface of metal
+    // or sand.
+
+    // Test this behavior out in the UI. Make sure that water flows (more or less)
+    // realistically.
+
+    // Before continuing, take a look at your step method and see if you can
+    // organize your code to minimize duplication.
+
 
   /********************************************************************/
   /********************************************************************/
   /**
    * DO NOT MODIFY
    *
-   * <p>The rest of this file is UI and testing infrastructure. Do not modify as part of pre-GDA Lab
+   * <p>
+   * The rest of this file is UI and testing infrastructure. Do not modify as part
+   * of pre-GDA Lab
    * 5.
    */
   /********************************************************************/
@@ -112,11 +191,14 @@ public void step() {
   }
 
   /**
-   * Special random number generating class to help get consistent results for testing.
+   * Special random number generating class to help get consistent results for
+   * testing.
    *
-   * <p>Please use getRandomPoint to get an arbitrary point on the grid to evaluate.
+   * <p>
+   * Please use getRandomPoint to get an arbitrary point on the grid to evaluate.
    *
-   * <p>When dealing with water, please use getRandomDirection.
+   * <p>
+   * When dealing with water, please use getRandomDirection.
    */
   public static class RandomGenerator {
     private static Random randomNumberGeneratorForPoints;
@@ -147,9 +229,11 @@ public void step() {
     /**
      * Method that returns a random direction.
      *
-     * @return an int indicating the direction of movement: 0: Indicating the water should attempt
-     *     to move down 1: Indicating the water should attempt to move right 2: Indicating the water
-     *     should attempt to move left
+     * @return an int indicating the direction of movement: 0: Indicating the water
+     *         should attempt
+     *         to move down 1: Indicating the water should attempt to move right 2:
+     *         Indicating the water
+     *         should attempt to move left
      */
     public int getRandomDirection() {
       return randomNumberGeneratorForDirections.nextInt(3);
@@ -162,8 +246,7 @@ public void step() {
     int numRows = in.nextInt();
     int numCols = in.nextInt();
     int iterations = in.nextInt();
-    Solution lab =
-        new Solution(new NullDisplay(numRows, numCols), new RandomGenerator(0, numRows, numCols));
+    Solution lab = new Solution(new NullDisplay(numRows, numCols), new RandomGenerator(0, numRows, numCols));
     lab.readGridValues(in);
     lab.runNTimes(iterations);
     lab.printGrid();
@@ -204,7 +287,8 @@ public void step() {
   }
 
   /**
-   * Runs one iteration of the display. Note that one iteration may call step repeatedly depending
+   * Runs one iteration of the display. Note that one iteration may call step
+   * repeatedly depending
    * on the speed of the UI.
    */
   private void runOneTime() {
@@ -221,7 +305,8 @@ public void step() {
   }
 
   /**
-   * An implementation of the SandDisplayInterface that doesn't display anything. Used for testing.
+   * An implementation of the SandDisplayInterface that doesn't display anything.
+   * Used for testing.
    */
   static class NullDisplay implements SandDisplayInterface {
     private int numRows;
@@ -232,7 +317,8 @@ public void step() {
       this.numCols = numCols;
     }
 
-    public void pause(int milliseconds) {}
+    public void pause(int milliseconds) {
+    }
 
     public int getNumRows() {
       return numRows;
@@ -250,13 +336,15 @@ public void step() {
       return 0;
     }
 
-    public void setColor(int row, int col, Color color) {}
+    public void setColor(int row, int col, Color color) {
+    }
 
     public int getSpeed() {
       return 1;
     }
 
-    public void repaint() {}
+    public void repaint() {
+    }
   }
 
   /** Interface for the UI of the SandLab. */
