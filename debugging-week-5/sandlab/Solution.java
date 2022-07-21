@@ -85,6 +85,11 @@ public class Solution {
     // move the sand down one row.
     RandomGenerator randoNumbers = new RandomGenerator(display.getNumRows() - 1, display.getNumColumns() - 1);
     Point randomPoint1 = randoNumbers.getRandomPoint();
+    if ((grid[randomPoint1.row][randomPoint1.column]) == 3 && (grid[randomPoint1.row + 1][randomPoint1.column] == 2)){
+      grid[randomPoint1.row][randomPoint1.column] = 2;
+      grid[randomPoint1.row + 1][randomPoint1.column] = 3; 
+    }
+
     // Checks if cell is sand and then moves the cell if there's nothing below it.
     if ((grid[randomPoint1.row][randomPoint1.column] == 2) && (grid[randomPoint1.row + 1][randomPoint1.column] == 0)
         && (randomPoint1.row + 1 <= display.getNumRows())) {
