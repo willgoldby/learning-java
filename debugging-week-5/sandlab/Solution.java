@@ -83,55 +83,67 @@ public class Solution {
     // pick a random position within the grid
     // if position contains sand and the space below is empty
     // move the sand down one row.
+    
+
+    // Create a RandomGenerator object.
+    // The RandomGenerator object can get a random point in the grid
+    // and generate random numbers. 
     RandomGenerator randoNumbers = new RandomGenerator(display.getNumRows() - 1, display.getNumColumns() - 1);
     Point randomPoint1 = randoNumbers.getRandomPoint();
-    if ((grid[randomPoint1.row][randomPoint1.column]) == 3 && (grid[randomPoint1.row + 1][randomPoint1.column] == 2)){
-      grid[randomPoint1.row][randomPoint1.column] = 2;
-      grid[randomPoint1.row + 1][randomPoint1.column] = 3; 
-    }
+    int direction = randoNumbers.getRandomDirection();
+    //System.out.println("This is the direction: " + direction); 
+    // 1. Pick a random position in the grid.
+    // 2. If the cell contains sand, and there is nothing below it,
+    //    move the sand down one cell.  
+    
+    // 1. The randome position is already picked above.
+    
 
-    // Checks if cell is sand and then moves the cell if there's nothing below it.
+    // 2. Checks if cell is sand and then moves the cell if there's nothing below it.
+    // Check if cell is sand and there's nothing below it.
     if ((grid[randomPoint1.row][randomPoint1.column] == 2) && (grid[randomPoint1.row + 1][randomPoint1.column] == 0)
+        // Make sure you don't go out of bounds when checking what's below the sand.
         && (randomPoint1.row + 1 <= display.getNumRows())) {
       grid[randomPoint1.row][randomPoint1.column] = 0;
       grid[randomPoint1.row + 1][randomPoint1.column] = 2;
     } // End bracket for sand.
-    // Checks if cell is water.
+
+    // 1. Check to see if a cell is water.
+    // 2. If it is water, generate a random number that represents
+    //    the direction the water will flow.
+    // 3. If the random number is 0, and if there is nothing below the cell,
+    //    move the water down.
+    // 4. If the random number is 1, the water moves to the right -- if there
+    //    is nothing to the right of it.
+    // 5. If the random number is 2, the water moves to the left if possilbe.
+
+    // 1.  Checks if cell is water.
     else if ((grid[randomPoint1.row][randomPoint1.column] == 3)){
-      // get random direction.
-      int direction = randoNumbers.getRandomDirection();
-      // If direction is 0, have water flow like the sand.
-      if (direction == 0){
-        if ((grid[randomPoint1.row + 1][randomPoint1.column] == 0)
-        && (randomPoint1.row + 1 <= display.getNumRows())){
+      // 2. get random direction.
+      // 3. If the random number is 0, and if there is nothing below the cell,
+      //    move the water down.
+      if ((direction == 0) && (randomPoint1.row + 5 <= display.getNumRows())){
+        if ((grid[randomPoint1.row + 1][randomPoint1.column] == 0)){
       grid[randomPoint1.row][randomPoint1.column] = 0;
       grid[randomPoint1.row + 1][randomPoint1.column] = 3;
         } // End bracket for moving water down one row.
       } // End bracket for checking if direction is 0.
-      // Move water to the right.
-      // Move water particle to the right if direction is 1.
-      else if (direction == 1){
-        if ((grid[randomPoint1.row][randomPoint1.column + 1] == 0) && 
-          (randomPoint1.column + 1 <= display.getNumColumns()) &&
-          (grid[randomPoint1.row + 1][randomPoint1.column] == 1 || 
-          grid[randomPoint1.row + 1][randomPoint1.column] == 2 ||
-          grid[randomPoint1.row + 1][randomPoint1.column] == 3)){
+      // 4. If the random number is 1, the water moves to the right -- if there
+      //    is nothing to the right of it.
+      if ((direction == 1) && (randomPoint1.column + 3 <= display.getNumColumns())){
+        // Make sure there is nothing to the right.
+        if ((grid[randomPoint1.row][randomPoint1.column + 1] == 0)){ 
+          // Make sure to stay within the grid.
             grid[randomPoint1.row][randomPoint1.column] = 0;
             grid[randomPoint1.row][randomPoint1.column + 1] = 3;
           } // End bracket for water moving to the right.
       }
-      // Move water to the left if direction is 2.
-      else if (direction == 2) {
-        // Make sure there's nothing to the left.
-        if((grid[randomPoint1.row][randomPoint1.column - 1] == 0) &&
-          // Make sure you're within bounds of display.
-          (randomPoint1.column - 1 >= display.getNumColumns()) &&
-          (grid[randomPoint1.row - 1][randomPoint1.column] == 1 || 
-            grid[randomPoint1.row - 1][randomPoint1.column] == 2 ||
-            grid[randomPoint1.row - 1][randomPoint1.column] == 3)){
-              grid[randomPoint1.row][randomPoint1.column] = 0;
-              grid[randomPoint1.row][randomPoint1.column - 1] = 3;
-            }
+      // 1. If the random number is 2, the water moves to the left.
+      if ((direction == 2) && (randomPoint1.column - 1 >= 0)) {
+         if ((grid[randomPoint1.row][randomPoint1.column - 1] == 0)) {
+            grid[randomPoint1.row][randomPoint1.column] = 0;
+            grid[randomPoint1.row][randomPoint1.column - 1] = 3;
+          }           
       }
     } // End bracket for water.
   } // End bracket for step()
@@ -371,3 +383,7 @@ public class Solution {
     public int getTool();
   }
 }
+// if ((grid[randomPoint1.row][randomPoint1.column]) == 3 && (grid[randomPoint1.row + 1][randomPoint1.column] == 2)){
+//       grid[randomPoint1.row][randomPoint1.column] = 2;
+//       grid[randomPoint1.row + 1][randomPoint1.column] = 3; 
+//     }
