@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.Set;
 
 public class Solution{
@@ -15,14 +16,28 @@ public class Solution{
     //    word.
    int consanantCount = 0;
    int consanantIndex = 0;
+   int vowelCount = 0;
+   int vowelIndex = 0;
+   int nonLettersCount = 0;
+   int nonLettersIndex = 0;
     for (int i = 0; i < input.length; i++){
      int consanantResult = countConsonants(input[i]);
      if (consanantResult > consanantCount){
       consanantIndex = i;
       consanantCount = consanantResult;
      } 
+     int vowelResult = countVowels(input[i]);
+     if (vowelResult > vowelCount){
+      vowelIndex = i;
+      vowelCount = vowelResult;
+     }
+    int nonLettersResult = countNonLetters(input[i]);
+    if (nonLettersResult > nonLettersCount){
+      nonLettersIndex = i;
+      nonLettersCount = nonLettersResult;
+    } 
     }
-    return new String[] {input[consanantIndex], input[0], input[0]};
+    return new String[] {input[consanantIndex], input[vowelIndex], input[nonLettersIndex]};
 
   }
 
@@ -43,10 +58,40 @@ public class Solution{
     return count; 
   }
 
-
+public static int countVowels(String word){
+    // 1. Loop over characters.
+    // 2. If char is vowel, add it to count
+    // 3. return int of count.
+    Set<String> VOWELS =  Set.of("A", "E", "I", "O", "U", "Y");
+    int count = 0;
+    String[] characters = word.split("|.");
+    for (String character: characters){
+      String stringUpper = character.toUpperCase();
+      if (VOWELS.contains(stringUpper)){
+        count = count + 1;
+      }
+    }
+    return count; 
+  }
+public static int countNonLetters(String word){
+    // 1. Loop over characters.
+    // 2. If char is vowel, add it to count
+    // 3. return int of count.
+    Set<String> LETTERS =  Set.of("A", "E", "I", "O", "U", "Y", "B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "X", "Z");
+    int count = 0;
+    String[] characters = word.split("|.");
+    for (String character: characters){
+      String stringUpper = character.toUpperCase();
+      if (!LETTERS.contains(stringUpper)){
+        count = count + 1;
+      }
+    }
+    return count; 
+  }
 public static void main(String[] args){
   String[] result;
   result = findTargetWords(new String[] {"strengths", "ant 1", "turkey", "facetious"});
+  System.out.println(Arrays.toString(result));
 }
 
 }
